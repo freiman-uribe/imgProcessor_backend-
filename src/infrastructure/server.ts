@@ -22,6 +22,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/images", imageRoutes);
+app.use("/", (req, res) => res.status(200).send("server arriba"));
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server started on port ${PORT}`));
