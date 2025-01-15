@@ -1,0 +1,30 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull Docker image for application
+        run: sudo docker pull freimanuribe15/imgproc-pipeline:latest
+
+      - name: Pull Docker image for MongoDB
+        run: sudo docker pull mongo:latest
+
+      - name: Delete Old MongoDB container
+        run: sudo docker rm -f mongo-container || true
+
+      - name: Delete Old application container
+        run: sudo docker rm -f imgproc-pipeline-container || true
+
+      - name: Run MongoDB Container
+        run: sudo docker run -d --name mongo-container -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example mongo:latest
+
+      - name: Run Application Container
+        run: sudo docker run -d -p 3000:3000 --name imgproc-pipeline-container --link mongo-container:mongo -e MONGO_URI="mongodb://root:example@mongo:27017/img-processor?authSource=admin" freimanuribe15/imgproc-pipeline
