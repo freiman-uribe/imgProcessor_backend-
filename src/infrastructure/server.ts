@@ -10,6 +10,7 @@ const server = http.createServer(app);
 
 require("dotenv").config();
 
+
 connectDB();
 
 const corsOptions = {
