@@ -60,7 +60,9 @@ El proyecto sigue la arquitectura hexagonal, también conocida como arquitectura
 - `src/utils`: Contiene funciones utilitarias.
 
 #### Para visualizar la estructura mas claramente ingresa a: 
-- `https://gitingest.com/freiman-uribe/imgProcessor_backend-`
+- ```bash
+  https://gitingest.com/freiman-uribe/imgProcessor_backend-
+  ```
 
 ### Instalación
 
