@@ -3,19 +3,14 @@ import sharp from "sharp";
 import { Buffer } from "buffer";
 import moment from "moment-timezone";
 import ImageRepositoryImpl from "../../adapters/repositories/ImageRepositoryImpl";
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
+import { uploadToS3 } from "../../utils/s3Utils";
 
 const imageRepository = new ImageRepositoryImpl();
 
 class ImageService {
   static async processImage(userId: string, imageBuffer: Buffer): Promise<any> {
     const pngBuffer = await sharp(imageBuffer).png().toBuffer();
-    const imageUrl = await this.uploadToS3(pngBuffer);
+    const imageUrl = await uploadToS3(pngBuffer);
     const date = moment.tz("America/Bogota").format("YYYY-MM-DD HH:mm:ss");
     const timestamp = moment.utc(date).toDate();
 
@@ -26,23 +21,6 @@ class ImageService {
     };
 
     return await imageRepository.save(imageData);
-  }
-
-  static async uploadToS3(buffer: Buffer): Promise<string> {
-    const bucketName = process.env.AWS_S3_BUCKET_NAME;
-    if (!bucketName) {
-      throw new Error("AWS_S3_BUCKET_NAME is not defined");
-    }
-
-    const params = {
-      Bucket: bucketName,
-      Key: `images/${Date.now()}.png`,
-      Body: buffer,
-      ContentType: "image/png",
-    };
-
-    const { Location } = await s3.upload(params).promise();
-    return Location;
   }
 
   static async getImagesByDate(startDate: Date, endDate: Date) {
