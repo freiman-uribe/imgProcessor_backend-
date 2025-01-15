@@ -13,9 +13,11 @@ RUN npm install
 # Copia el resto del código de la aplicación
 COPY . .
 
+# Compila el proyecto TypeScript a JavaScript
+RUN npm run build
+
 # Expone el puerto en el que la aplicación se ejecutará
 EXPOSE 3000
 
 # Comando para iniciar la aplicación
-CMD ["ts-node", "src/infrastructure/server.ts"]
-
+CMD ["node", "dist/infrastructure/server.js"]
