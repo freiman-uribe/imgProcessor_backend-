@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/infrastructure/server.ts",
     "build": "tsc",
-    "start": "ts-node --esm dist/infrastructure/server.ts"
+    "start": "ts-node src/infrastructure/server.ts"
   },
   "keywords": [],
   "author": "",
