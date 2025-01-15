@@ -1,6 +1,7 @@
 
 import { ImageModel } from "../../domain/models/Image";
 import ImageRepository from "../../domain/repositories/ImageRepository";
+import { UserInterface } from "../../infrastructure/types/index";
 
 class ImageRepositoryImpl extends ImageRepository {
   async save(imageData: {
@@ -13,21 +14,41 @@ class ImageRepositoryImpl extends ImageRepository {
       const result = await newImage.save();
       return result;
     } catch (error) {
-      console.error('🚀 error:', error)
+      console.error("🚀 error:", error);
     }
   }
-
   async findByDateRange(startDate: Date, endDate: Date): Promise<any[]> {
-    return await ImageModel.find({
+    const images = await ImageModel.find({
       timestamp: {
         $gte: startDate,
         $lte: endDate,
       },
+    }).populate("userId", "name");
+
+    return images.map((image) => {
+      const imageObject = image.toObject();
+      const user = imageObject.userId as unknown as UserInterface;
+      const { userId, ...rest } = imageObject;
+      return {
+        ...rest,
+        name: user.name,
+      };
     });
   }
 
-  async countImagesGroupedByHour(): Promise<any[]> {
+  async countImagesGroupedByHour(
+    startDate: Date,
+    endDate: Date
+  ): Promise<any> {
     const result = await ImageModel.aggregate([
+      {
+        $match: {
+          timestamp: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
       {
         $group: {
           _id: { $hour: "$timestamp" },

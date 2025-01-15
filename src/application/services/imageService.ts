@@ -2,7 +2,6 @@ import AWS from "aws-sdk";
 import sharp from "sharp";
 import { Buffer } from "buffer";
 import moment from "moment-timezone";
-
 import ImageRepositoryImpl from "../../adapters/repositories/ImageRepositoryImpl";
 
 const s3 = new AWS.S3({
@@ -17,7 +16,7 @@ class ImageService {
   static async processImage(userId: string, imageBuffer: Buffer): Promise<any> {
     const pngBuffer = await sharp(imageBuffer).png().toBuffer();
     const imageUrl = await this.uploadToS3(pngBuffer);
-    const date = moment.tz("America/Bogota").format('YYYY-MM-DD HH:mm:ss');
+    const date = moment.tz("America/Bogota").format("YYYY-MM-DD HH:mm:ss");
     const timestamp = moment.utc(date).toDate();
 
     const imageData = {
@@ -50,8 +49,8 @@ class ImageService {
     return await imageRepository.findByDateRange(startDate, endDate);
   }
 
-  static async getImageCountGroupedByHour() {
-    return await imageRepository.countImagesGroupedByHour();
+  static async getImageCountGroupedByHour(startDate: Date, endDate: Date) {
+    return await imageRepository.countImagesGroupedByHour(startDate, endDate);
   }
 }
 

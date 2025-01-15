@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { verifyToken } from "../../utils/jwtutils";
 import User from "../../domain/models/User"
 import { UserInterface } from "../types/index"
 
@@ -8,12 +9,13 @@ interface AuthRequest extends Request {
 }
 
 export default async function (req: AuthRequest, res: Response, next: NextFunction) {
-    const token = req.header('x-auth-token');
+    const authHeader = req.header('Authorization');
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
     if (!token) {
         return res.status(401).json({ msg: 'No token, authorization denied' });
     }
     try {
-      const decoded = jwt.verify(token, "secret") as jwt.JwtPayload;
+      const decoded = verifyToken(token) as jwt.JwtPayload;
       
       const user = await User.findById(decoded.user.id);
       if (!user) {

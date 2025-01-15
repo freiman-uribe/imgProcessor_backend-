@@ -7,7 +7,7 @@ export default class ImageRepository {
     throw new Error("Method not implemented");
   }
 
-  async countImagesGroupedByHour(): Promise<any> {
+  async countImagesGroupedByHour(startDate: Date, endDate: Date): Promise<any> {
     throw new Error("Method not implemented");
   }
 }

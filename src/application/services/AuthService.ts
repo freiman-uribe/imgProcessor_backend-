@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { generateToken } from "../../utils/jwtutils";
 import User from "../../domain/models/User";
 import UserRepositoryImpl from "../../adapters/repositories/UserRepositoryImpl";
 
@@ -20,7 +20,9 @@ class AuthService {
     user.password = await bcrypt.hash(password, salt);
     await userRepository.save(user);
     const payload = { user: { id: user.id } };
-    return jwt.sign(payload, "secret", { expiresIn: 360000 });
+    const token = generateToken(payload, 360000);
+
+    return `Bearer ${token}`;
   }
 
   static async login(username: string, password: string) {
@@ -34,7 +36,9 @@ class AuthService {
       throw new Error("Invalid credentials");
     }
     const payload = { user: { id: user.id } };
-    return jwt.sign(payload, "secret", { expiresIn: 360000 });
+    const token = generateToken(payload, 360000);
+
+    return `Bearer ${token}`;
   }
 }
 

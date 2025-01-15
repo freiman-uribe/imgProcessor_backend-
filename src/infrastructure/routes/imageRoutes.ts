@@ -12,7 +12,7 @@ router.post(
   upload.single("image"),
   ImageController.uploadImage
 );
-router.get("/images", auth, ImageController.getImagesByDate);
-router.get("/images/count", auth, ImageController.getImagesGroupedByHour);
+router.get("/search", auth, ImageController.getImagesByDate);
+router.get("/count", auth, ImageController.getImagesGroupedByHour);
 
 export default router;

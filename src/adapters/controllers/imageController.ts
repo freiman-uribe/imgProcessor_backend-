@@ -41,8 +41,16 @@ class ImageController {
     req: Request,
     res: Response
   ): Promise<void> {
+    const { date } = req.query;
     try {
-      const groupedImages = await imageService.getImageCountGroupedByHour();
+      const start = new Date(date as string);
+      const end = new Date(date as string);
+      end.setUTCHours(23, 59, 59, 999);
+
+      const groupedImages = await imageService.getImageCountGroupedByHour(
+        start,
+        end
+      );
       res.json(groupedImages);
     } catch (err) {
       console.error(err);
